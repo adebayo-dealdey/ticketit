@@ -36,11 +36,17 @@ class AgentsController extends Controller
 
     public function update($id, Request $request)
     {
-        $this->syncAgentCategories($id, $request);
+        $result = $this->syncAgentCategories($id, $request);
 
-        Session::flash('status', trans('ticketit::lang.agents-joined-categories-ok'));
-
-        return redirect()->action('\Kordy\Ticketit\Controllers\AgentsController@index');
+        if ($request->ajax()) {
+            $response = response()->json(['categories' => Agent::find($id)->categories]);
+            return $result ? $response : null;
+        }
+        else
+        {
+            Session::flash('status', trans('ticketit::lang.agents-joined-categories-ok'));
+            return redirect()->action('\Kordy\Ticketit\Controllers\AgentsController@index');
+        }
     }
 
     public function destroy($id)
@@ -100,8 +106,27 @@ class AgentsController extends Controller
      */
     public function syncAgentCategories($id, Request $request)
     {
-        $form_cats = ($request->input('agent_cats') == null) ? [] : $request->input('agent_cats');
+        $form_cat = ($request->input('category-id') == null) ? '' : $request->input('category-id');
+        $form_action = ($request->input('_action') == null) ? "save" : $request->input('_action');
         $agent = Agent::find($id);
-        $agent->categories()->sync($form_cats);
+        $form_cats = [];
+        if ($form_action == "delete") {
+            $categories = $agent->categories;
+            foreach ($categories as $category) {
+                if ($form_cat != $category->id) {
+                    $form_cats[] = $category->id;
+                }
+            }
+            $agent->categories()->sync($form_cats);
+        }
+        else {
+            $categories = $agent->categories;
+            $form_cats[] = $form_cat;
+            foreach ($categories as $category) {
+                $form_cats[] = $category->id;
+            }
+            $agent->categories()->sync($form_cats);
+        }
+        return true;
     }
 }

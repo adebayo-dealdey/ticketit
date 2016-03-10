@@ -6,8 +6,8 @@ return [
   *  Constants
   */
 
-  'nav-active-tickets'               => 'Active Tickets',
-  'nav-completed-tickets'            => 'Completed Tickets',
+  'nav-active-tickets'               => 'Open Tickets',
+  'nav-completed-tickets'            => 'Closed Tickets',
 
   // Tables
   'table-id'                         => '#',

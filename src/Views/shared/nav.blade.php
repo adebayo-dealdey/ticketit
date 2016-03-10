@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-body">
-        <ul class="nav nav-pills">
+        <ul class="nav nav-tabs">
 
             <li role="presentation" class="{!! Request::is($setting->grab('main_route')) ? "active" : "" !!}">
                 <a href="/{{ $setting->grab('main_route') }}">{{ trans('ticketit::lang.nav-active-tickets') }}
